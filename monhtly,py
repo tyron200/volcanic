@@ -1,0 +1,34 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import calendar
+
+volcano_url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/volcano.csv"
+eruptions_url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/eruptions.csv"
+
+volcano_df = pd.read_csv(volcano_url)
+eruptions_df = pd.read_csv(eruptions_url)
+year_of_interest = 2000  # Replace this with the year you are interested in
+
+# Convert the date column to datetime format
+eruptions_df['start_date'] = pd.to_datetime(eruptions_df['start_date'])
+
+# Filter the data for the selected year
+eruptions_df_filtered = eruptions_df[eruptions_df['start_date'].dt.year == year_of_interest]
+# Group by month and count the number of eruptions in each month
+eruptions_by_month = eruptions_df_filtered['start_date'].dt.month.value_counts(
+).sort_index()
+
+# Create a list of month names for labeling the x-axis
+month_names = [calendar.month_abbr[i] for i in range(1, 13)]
+# Plot the data
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.bar(month_names, eruptions_by_month)
+
+# Set the title and labels
+ax.set_title(
+    f'Eruption Frequency per Month in {year_of_interest}', fontsize=16)
+ax.set_xlabel('Month')
+ax.set_ylabel('Frequency')
+
+# Show the plot
+plt.show()
